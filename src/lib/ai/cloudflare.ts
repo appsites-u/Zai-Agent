@@ -20,8 +20,8 @@ export function readCloudflareConfig(
 export function extractDelta(payload: unknown): string {
   if (!payload || typeof payload !== "object") return "";
   const p = payload as Record<string, unknown>;
-  if (typeof p.response === "string") return p.response;
-  const choices = p.choices as Array<{ delta?: { content?: string } }> | undefined;
+  if (typeof p["response"] === "string") return p["response"];
+  const choices = p["choices"] as Array<{ delta?: { content?: string } }> | undefined;
   return choices?.[0]?.delta?.content ?? "";
 }
 
