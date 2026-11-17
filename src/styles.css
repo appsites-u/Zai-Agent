@@ -119,9 +119,9 @@
 }
 
 .dark {
-  --background: oklch(0.16 0.01 260);
+  --background: oklch(0.16 0.002 260);
   --foreground: oklch(0.95 0.005 95);
-  --card: oklch(0.2 0.012 260);
+  --card: oklch(0.2 0.002 260);
   --card-foreground: oklch(0.95 0.005 95);
   --popover: oklch(0.21 0.012 260);
   --popover-foreground: oklch(0.95 0.005 95);
@@ -146,7 +146,7 @@
   --chart-3: oklch(0.8 0.14 80);
   --chart-4: oklch(0.65 0.2 25);
   --chart-5: oklch(0.68 0.012 260);
-  --sidebar: oklch(0.18 0.01 260);
+  --sidebar: oklch(0.18 0.002 260);
   --sidebar-foreground: oklch(0.9 0.005 95);
   --sidebar-primary: oklch(0.78 0.15 165);
   --sidebar-primary-foreground: oklch(0.18 0.03 165);
@@ -174,3 +174,9 @@
 
 @utility bg-glow { background-image: var(--gradient-glow); }
 @utility shadow-card { box-shadow: var(--shadow-card); }
+
+@theme { --color-hero-foreground: oklch(0.96 0 0); --color-hero-muted: oklch(0.76 0 0); }
+.auth-layout { display:grid; grid-template-columns: 1fr; }
+@media(min-width:1024px){.auth-layout{grid-template-columns: 46% 54%;}.auth-art{min-height:100vh;}}
+@media(max-width:1023px){.workspace-sidebar{display:none;}.workspace-sidebar.sidebar-open{display:flex;box-shadow:var(--shadow-card);}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
