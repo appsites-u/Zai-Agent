@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { roleAllows, type Access } from './roles';
 import { agentSchema, departmentSchema, projectSchema, taskSchema, integrationSchema, mutationSchema, requiredAccess } from './workspace-schema';
-import type { Database } from '@/integrations/supabase/types';
+import type { Database, Tables } from '@/integrations/supabase/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export async function enforceAccess(client: SupabaseClient<Database>, userId: string, access: Access) {
@@ -21,14 +21,15 @@ export const getWorkspace = createServerFn({ method: 'POST' }).middleware([requi
   const { data: roleRows, error } = await s.from('user_roles').select('role').eq('user_id', userId);
   if (error) throw new Error('Could not verify workspace access.');
   const roles = roleRows?.map(r => r.role) ?? [];
-  const profile = unwrap(await s.from('profiles').select('id,display_name,email').eq('id',userId).single());
-  if (!roleAllows(roles,'member')) return { roles, profile, departments: [], agents: [], projects: [], tasks: [], runs: [], integrations: [], approvals: [], audit: [], usage: [], people: [], roleRows: [], settings: [], conversations: [] };
+  const profile: Pick<Tables<'profiles'>,'id'|'display_name'|'email'> | null = (await s.from('profiles').select('id,display_name,email').eq('id',userId).maybeSingle()).data;
+  const noPeople: Tables<'profiles'>[] = [];
+  if (!roleAllows(roles,'member')) return { roles, profile, departments: [], agents: [], projects: [], tasks: [], runs: [], integrations: [], approvals: [], audit: [], usage: [], people: noPeople, roleRows: [], settings: [], conversations: [] };
   const [departments,agents,projects,tasks,runs,integrations,approvals,usage,conversations] = await Promise.all([
     s.from('departments').select('*').order('created_at',{ascending:false}), s.from('agents').select('*').order('created_at',{ascending:false}), s.from('projects').select('*').order('created_at',{ascending:false}), s.from('tasks').select('*').order('created_at',{ascending:false}), s.from('task_runs').select('*').order('created_at',{ascending:false}).limit(100), s.from('integrations').select('*').order('created_at'), s.from('approvals').select('*').order('created_at',{ascending:false}).limit(100), s.from('ai_usage').select('*').order('created_at',{ascending:false}).limit(100), s.from('conversations').select('*').order('updated_at',{ascending:false}),
   ]);
   const admin = roleAllows(roles,'admin');
   const [audit,people,allRoles,settings] = admin ? await Promise.all([s.from('audit_logs').select('*').order('created_at',{ascending:false}).limit(100),s.from('profiles').select('*'),s.from('user_roles').select('*'),s.from('app_settings').select('*')]) : [null,null,null,null];
-  return { roles,profile,departments:unwrap(departments),agents:unwrap(agents),projects:unwrap(projects),tasks:unwrap(tasks),runs:unwrap(runs),integrations:unwrap(integrations),approvals:unwrap(approvals),usage:unwrap(usage),conversations:unwrap(conversations),audit:audit?unwrap(audit):[],people:people?unwrap(people):[],roleRows:allRoles?unwrap(allRoles):[],settings:settings?unwrap(settings):[] };
+  return { roles,profile,departments:unwrap(departments),agents:unwrap(agents),projects:unwrap(projects),tasks:unwrap(tasks),runs:unwrap(runs),integrations:unwrap(integrations),approvals:unwrap(approvals),usage:unwrap(usage),conversations:unwrap(conversations),audit:audit?unwrap(audit):[],people:people?unwrap(people):noPeople,roleRows:allRoles?unwrap(allRoles):[],settings:settings?unwrap(settings):[] };
 });
 export const saveEntity = createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator(input => mutationSchema.parse(input)).handler(async ({data,context}) => {
   const {supabase:s,userId} = context;

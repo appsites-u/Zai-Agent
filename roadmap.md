@@ -1,11 +1,8 @@
 # Zai Agent roadmap
-- [x] Database schema, roles, row-level security, approvals, audit triggers
-- [x] Email, Google and Lovable sign-in enabled
-- [x] Cloudflare Workers AI provider layer (server-only, timeouts, error mapping)
-- [ ] Sign-in page + protected app shell with persistent theme toggle
-- [ ] Current milestone: inspect existing schema/code, authenticated dashboard and real core CRUD, verify tests/lint and browser flows
-- [ ] Dashboard, departments, agents, projects, tasks/runs, chat, integrations, approvals, audit, settings, setup pages
-- [ ] Streaming chat endpoint + task run/retry server functions
-- [ ] Tests (authorization, task workflow, AI error handling)
-- [ ] README (architecture, env vars, migrations, deployment)
+- [x] Database schema, roles, row-level security (on for all 14 tables), approvals, audit triggers
+- [x] Sign-in, protected app shell, persistent theme toggle, all workspace screens
+- [x] Server-side task run/retry, chat persistence, connection test
+- [x] Tests (roles, task decisions, AI errors/timeouts), README
+- [ ] Token-by-token streaming in chat UI
+- [ ] First admin account + signed-in end-to-end check (blocked: no users exist yet)
 - [ ] Add CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_API_TOKEN in Project Settings → Secrets (blocked: user)
