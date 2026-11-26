@@ -1,4 +1,5 @@
 # Zai Agent roadmap
+- [ ] Remove social sign-in options from the app's sign-in screen
 - [x] Database schema, roles, row-level security (on for all 14 tables), approvals, audit triggers
 - [x] Sign-in, protected app shell, persistent theme toggle, all workspace screens
 - [x] Server-side task run/retry, chat persistence, connection test
