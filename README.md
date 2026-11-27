@@ -30,7 +30,7 @@ bun run build
 Schema changes go through Lovable's database migration workflow (files in `supabase/migrations`). Do not hand-edit applied migrations.
 
 ## First admin
-The first account needs the `admin` role inserted into `user_roles` (via the backend view). Admins grant other roles in **Settings**.
+An admin role is already assigned (verified Nov 2026). Admins grant other roles in **Settings**.
 
 ## Deployment
 The app is deployed by Lovable's Publish button (Cloudflare Workers runtime). Self-hosting alternative:
